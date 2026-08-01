@@ -29,6 +29,20 @@ function normalizeText(s){
     .toLowerCase()
 }
 
+// Utility: ensure value is an array of strings
+function toArray(v){
+  if(Array.isArray(v)) return v
+  if(!v) return []
+  // if it's a string, split on newlines or commas, trim each item
+  if(typeof v === 'string'){
+    return v.split(/\r?\n|,/) // split on newline or comma
+            .map(s=>s.trim())
+            .filter(Boolean)
+  }
+  // fallback: try to coerce to string and split
+  return String(v).split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean)
+}
+
 // Utility: debounce function to limit how often a function runs
 function debounce(fn, wait){
   let timer = null
@@ -40,6 +54,7 @@ function debounce(fn, wait){
 
 // Always fetch data from repo JSON; do not use localStorage
 function loadRecipes(){
+  console.log('loadRecipes: start')
   fetch('data/sample-recipes.json')
     .then(r=>{
       if(!r.ok) throw new Error('Fetch failed')
@@ -47,6 +62,7 @@ function loadRecipes(){
     })
     .then(data=>{
       recipes = Array.isArray(data) ? data : []
+      console.log('loadRecipes: got', recipes.length, 'recipes')
       initList()
       // If URL has ?recipe=ID open that recipe (deep-link support)
       const params = new URLSearchParams(location.search)
@@ -56,6 +72,7 @@ function loadRecipes(){
         setTimeout(()=>{
           const found = recipes.find(x=>x.id===rid)
           if(found) showRecipe(rid)
+          else console.warn('loadRecipes: recipe id in URL not found', rid)
         }, 0)
       }
     })
@@ -127,16 +144,17 @@ function loadMore(){
     }
 
     // Build body HTML
-    const ingList = (r.ingredients || []).slice(0,10)
-    const moreCount = Math.max(0, (r.ingredients || []).length - ingList.length)
+    const ingredientsArr = toArray(r.ingredients)
+    const ingList = ingredientsArr.slice(0,10)
+    const moreCount = Math.max(0, ingredientsArr.length - ingList.length)
     const preview = ingList.join(', ') + (moreCount>0 ? ` (a další ${moreCount})` : '')
     const bodyHtml = `
       <div class="card-body">
         <h3>${escapeHtml(r.title)}</h3>
         <div class="meta">${metaHtml(r)}</div>
         <div class="muted">${escapeHtml(r.description || '')}</div>
-        <div class="card-body-preview">${preview? `<div class="preview-ing" title="${escapeHtml((r.ingredients||[]).join(', '))}">${escapeHtml(preview)}</div>` : ''}</div>
-        <div class="chips">${(r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
+        <div class="card-body-preview">${preview? `<div class="preview-ing" title="${escapeHtml(ingredientsArr.join(', '))}">${escapeHtml(preview)}</div>` : ''}</div>
+        <div class="chips">${(toArray(r.tags)||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
       </div>`
 
     // Create anchor for per-recipe page (SEO / deep-linking)
@@ -182,9 +200,9 @@ function applySearch(q){
   filtered = recipes.filter(r=>{
     if(!nq) return true
     // include title, description, tags, ingredients and steps in searchable haystack
-    const tags = Array.isArray(r.tags) ? r.tags.join(' ') : ''
-    const ingredients = Array.isArray(r.ingredients) ? r.ingredients.join(' ') : ''
-    const steps = Array.isArray(r.steps) ? r.steps.join(' ') : ''
+    const tags = Array.isArray(r.tags) ? r.tags.join(' ') : (r.tags || '')
+    const ingredients = toArray(r.ingredients).join(' ')
+    const steps = toArray(r.steps).join(' ')
     const hay = normalizeText(r.title + ' ' + (r.description||'') + ' ' + tags + ' ' + ingredients + ' ' + steps)
     return hay.includes(nq)
   })
@@ -199,15 +217,16 @@ function applySearch(q){
 }
 
 function showRecipe(id){
+  console.log('showRecipe called for', id)
   const r = recipes.find(x=>x.id===id)
   if(!r) return alert('Recept nenalezen')
   currentId = id
   dTitle.textContent = r.title
   dDesc.innerHTML = `${escapeHtml(r.description || '')}<div class="detail-meta">${metaHtml(r)}</div>`
   dIngr.innerHTML = ''
-  (r.ingredients||[]).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) })
+  toArray(r.ingredients).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) })
   dSteps.innerHTML = ''
-  (r.steps||[]).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) })
+  toArray(r.steps).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) })
   if(r.image){
     dImage.style.backgroundImage = `url(${r.image})`
     dImage.textContent = ''
