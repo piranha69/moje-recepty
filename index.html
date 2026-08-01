@@ -19,7 +19,6 @@
       </div>
       <div class="controls">
         <input id="search" placeholder="Hledat recepty..." aria-label="Hledat recepty" />
-        <button id="btn-new" class="btn primary">Přidat recept</button>
       </div>
     </div>
   </header>
@@ -35,36 +34,13 @@
       <ul id="detail-ingredients"></ul>
       <h3>Postup</h3>
       <ol id="detail-steps"></ol>
-      <div class="detail-actions">
-        <button id="edit" class="btn">Upravit</button>
-        <button id="delete" class="btn danger">Smazat</button>
-      </div>
-    </section>
-
-    <!-- Modal form -->
-    <section id="form" class="panel modal hidden" role="dialog" aria-modal="true" aria-labelledby="form-title">
-      <div class="modal-inner">
-        <h2 id="form-title">Přidat recept</h2>
-        <form id="recipe-form">
-          <input type="hidden" id="recipe-id" />
-          <label>Název<br><input id="title" required /></label>
-          <label>Krátký popis<br><input id="description" /></label>
-          <label>Ingredience (jedna na řádek)<br><textarea id="ingredients"></textarea></label>
-          <label>Postup (jedna věta/řádek)<br><textarea id="steps"></textarea></label>
-          <label>Štítky (oddělit čárkou)<br><input id="tags" /></label>
-          <div class="form-actions">
-            <button type="submit" class="btn primary">Uložit</button>
-            <button type="button" id="cancel" class="btn ghost">Zrušit</button>
-          </div>
-        </form>
-      </div>
     </section>
 
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <small>Statická aplikace — data se ukládají v prohlížeči (localStorage).</small>
+      <small>Statická aplikace — data se načítají z repozitáře (soubory v adresáři data/).</small>
     </div>
   </footer>
 
