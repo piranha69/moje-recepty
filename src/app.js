@@ -59,6 +59,14 @@ function initList(){
   loadMore()
 }
 
+function metaHtml(r){
+  const time = r.time ? `<span class="meta-time">⏱ ${escapeHtml(String(r.time))}</span>` : ''
+  const diffText = r.difficulty ? String(r.difficulty) : ''
+  const diffClass = diffText ? diffText.toLowerCase() : ''
+  const diff = diffText ? `<span class="meta-difficulty ${escapeHtml(diffClass)}">${escapeHtml(diffText)}</span>` : ''
+  return `${time}${diff}`
+}
+
 function loadMore(){
   if(renderedCount >= filtered.length) return
   const next = Math.min(renderedCount + BATCH, filtered.length)
@@ -96,8 +104,9 @@ function loadMore(){
     const preview = ingList.join(', ') + (moreCount>0 ? ` (a další ${moreCount})` : '')
     body.innerHTML = `
       <h3>${escapeHtml(r.title)}</h3>
+      <div class="meta">${metaHtml(r)}</div>
       <div class="muted">${escapeHtml(r.description || '')}</div>
-      <div class="card-body-preview">${preview? `<div class=\"preview-ing\" title=\"${escapeHtml((r.ingredients||[]).join(', '))}\">${escapeHtml(preview)}</div>` : ''}</div>
+      <div class="card-body-preview">${preview? `<div class="preview-ing" title="${escapeHtml((r.ingredients||[]).join(', '))}">${escapeHtml(preview)}</div>` : ''}</div>
       <div class="chips">${(r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>`
 
     card.appendChild(imgDiv)
@@ -139,7 +148,7 @@ function showRecipe(id){
   if(!r) return alert('Recept nenalezen')
   currentId = id
   dTitle.textContent = r.title
-  dDesc.textContent = r.description || ''
+  dDesc.innerHTML = `${escapeHtml(r.description || '')}<div class="detail-meta">${metaHtml(r)}</div>`
   dIngr.innerHTML = ''
   (r.ingredients||[]).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) })
   dSteps.innerHTML = ''

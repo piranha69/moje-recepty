@@ -36,15 +36,24 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 .card-body .muted{color:var(--muted);font-size:.95rem}
 .card-body .preview-ing{color:var(--muted);font-size:.85rem;margin-top:.4rem}
 .chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem}
-/* Updated chip style to resemble Varenka: orange pill with white text */
-.chip{background:linear-gradient(90deg,var(--accent),var(--accent-dark));padding:.28rem .6rem;border-radius:999px;font-size:.76rem;color:#fff;font-weight:600;box-shadow:0 4px 10px rgba(211,84,0,0.12)}
+/* Updated chip style to be less invasive: subtle translucent overlay with muted text */
+.chip{background:rgba(11,18,32,0.04);padding:.28rem .6rem;border-radius:999px;font-size:.76rem;color:var(--muted);font-weight:600}
 .card-actions{display:flex;justify-content:flex-end;margin-top:.6rem}
 .card-actions button{background:transparent;border:none;color:var(--accent-dark);font-weight:600;cursor:pointer}
 
+/* Meta (time + difficulty) */
+.card-body .meta{display:flex;gap:.5rem;align-items:center;margin:0 .0 0 .0;padding-bottom:.35rem}
+.meta-time{font-size:.85rem;color:var(--muted)}
+.meta-difficulty{font-size:.76rem;padding:.18rem .5rem;border-radius:8px;font-weight:700;text-transform:capitalize}
+.meta-difficulty.easy{background:rgba(34,197,94,0.12);color:#166534}
+.meta-difficulty.medium{background:rgba(250,204,21,0.12);color:#854d0e}
+.meta-difficulty.hard{background:rgba(220,38,38,0.12);color:#7f1d1d}
+
 /* Detail */
 .detail-panel{margin-top:1.25rem}
-.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--accent-dark);font-size:48px}
+.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--text)}
 .detail-panel h2{margin-top:0}
+.detail-meta{margin-top:0.5rem}
 
 /* Footer */
 .site-footer{padding:2rem 0}
@@ -63,7 +72,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
   .card{box-shadow:0 12px 30px rgba(0,0,0,0.6)}
   .card-img{background-color:#0b2230}
   .detail-image{background-color:#071827}
-  .chip{background:linear-gradient(90deg,#8b6a4b,#7f6242);box-shadow:0 4px 10px rgba(0,0,0,0.4);color:#fff}
+  .chip{background:rgba(255,255,255,0.04);box-shadow:none;color:var(--muted)}
   /* hero colors switch to cream shades on dark */
   .hero-text h2{background-image:linear-gradient(90deg,var(--hero-cream-1),var(--hero-cream-2));-webkit-background-clip:text;background-clip:text;color:transparent}
 }
