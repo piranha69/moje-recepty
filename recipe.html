@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recept — detail</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    /* Minimal local styles to ensure readability if global CSS missing */
+    body{font-family:system-ui, sans-serif; padding:16px}
+    .back-link{display:inline-block;margin-bottom:12px}
+    #detail{max-width:800px;margin:0 auto}
+    #detail-image{height:240px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:64px;color:#fff;background:#ddd}
+    .detail-meta{margin-top:8px}
+  </style>
+</head>
+<body>
+  <a class="back-link" href="/">← Zpět na seznam</a>
+  <main id="detail">
+    <h1 id="detail-title">...</h1>
+    <div id="detail-image"></div>
+    <div id="detail-desc">...</div>
+    <h3>Ingredience</h3>
+    <ul id="detail-ingredients"></ul>
+    <h3>Postup</h3>
+    <ol id="detail-steps"></ol>
+  </main>
+
+  <script>
+    function el(id){return document.getElementById(id)}
+    const dTitle = el('detail-title')
+    const dDesc = el('detail-desc')
+    const dIngr = el('detail-ingredients')
+    const dSteps = el('detail-steps')
+    const dImage = el('detail-image')
+
+    function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
+    function toArray(v){ if(Array.isArray(v)) return v; if(!v) return []; if(typeof v==='string') return v.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean); return String(v).split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean) }
+    function metaHtml(r){ const time = r.time? `<span class="meta-time">⏱ ${escapeHtml(String(r.time))}</span>`:''; const diffText = r.difficulty? String(r.difficulty):''; const diffClassMap = { 'snadné':'easy','střední':'medium','těžké':'hard'}; const diffClass = diffText? (diffClassMap[diffText.toLowerCase()] || diffText.toLowerCase().replace(/\s+/g,'-')):''; const diff = diffText? `<span class="meta-difficulty ${escapeHtml(diffClass)}">${escapeHtml(diffText)}</span>` : ''; return `${time}${diff}` }
+
+    // read id from query param
+    const params = new URLSearchParams(location.search)
+    const id = params.get('recipe')
+    if(!id){ dTitle.textContent = 'Recept nenalezen'; dDesc.textContent = 'Chybí identifikátor receptu v URL.'; }
+    else{
+      fetch('/data/sample-recipes.json').then(r=>{ if(!r.ok) throw new Error('Fetch failed'); return r.json() }).then(data=>{
+        const recipes = Array.isArray(data)? data: []
+        const r = recipes.find(x=>x.id===id)
+        if(!r){ dTitle.textContent = 'Recept nenalezen'; dDesc.textContent = `Recept s id ${id} nebyl nalezen.`; return }
+        dTitle.textContent = r.title || ''
+        dDesc.innerHTML = `${escapeHtml(r.description || '')}<div class="detail-meta">${metaHtml(r)}</div>`
+        dIngr.innerHTML = ''
+        toArray(r.ingredients).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) })
+        dSteps.innerHTML = ''
+        toArray(r.steps).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) })
+        if(r.image){
+          // set background after preloading image to avoid layout shift
+          const img = new Image()
+          img.src = r.image
+          img.onload = ()=> { dImage.style.backgroundImage = `url(${r.image})`; }
+          img.onerror = ()=> { dImage.style.backgroundImage = `url(${r.image})`; }
+        } else {
+          dImage.textContent = (r.title||'')[0] || ''
+        }
+      }).catch(err=>{
+        dTitle.textContent = 'Chyba při načítání'
+        dDesc.textContent = String(err)
+      })
+    }
+  </script>
+</body>
+</html>
