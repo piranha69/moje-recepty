@@ -88,7 +88,10 @@ function loadMore(){
 
     const body = document.createElement('div')
     body.className = 'card-body'
-    const preview = (r.ingredients || []).slice(0,2).join(', ')
+    // show up to 10 ingredients preview, append ellipsis if more
+    const ingList = (r.ingredients || []).slice(0,10)
+    const more = (r.ingredients || []).length > 10
+    const preview = ingList.join(', ') + (more ? ' …' : '')
     body.innerHTML = `
       <h3>${escapeHtml(r.title)}</h3>
       <div class="muted">${escapeHtml(r.description || '')}</div>
