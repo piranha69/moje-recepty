@@ -1,6 +1,8 @@
-// Client: render recipes with image support
-const STORAGE_KEY = 'mojeRecepty_v1'
+// Client: render recipes with image support, infinite scroll and lazy-loading
 let recipes = []
+let filtered = []
+const BATCH = 12
+let renderedCount = 0
 
 const el = id => document.getElementById(id)
 const listEl = el('list')
@@ -14,55 +16,83 @@ const dSteps = el('detail-steps')
 const dImage = el('detail-image')
 
 let currentId = null
+let observer = null
+let sentinel = null
 
+// Always fetch data from repo JSON; do not use localStorage
 function loadRecipes(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY)
-    recipes = raw ? JSON.parse(raw) : null
-  }catch(e){ recipes = null }
-  if(!recipes || recipes.length===0){
-    fetch('data/sample-recipes.json')
-      .then(r=>r.ok? r.json(): [])
-      .then(data=>{ recipes = data || []; renderList(); })
-      .catch(()=>{ recipes = []; renderList(); })
-  }else{
-    renderList()
-  }
+  fetch('data/sample-recipes.json')
+    .then(r=>{
+      if(!r.ok) throw new Error('Fetch failed')
+      return r.json()
+    })
+    .then(data=>{
+      recipes = Array.isArray(data) ? data : []
+      initList()
+    })
+    .catch(err=>{
+      console.error('Failed to load recipes:', err)
+      listEl.innerHTML = '<p class="muted">Nelze načíst data. Ujistěte se, že soubory v adresáři data/ existují a že stránku spouštíte přes HTTP (ne file://).</p>'
+    })
 }
 
-function renderList(filter=''){
+function initList(){
+  // initialize filtered and rendering
+  filtered = recipes.slice()
+  renderedCount = 0
   listEl.innerHTML = ''
-  const q = filter.trim().toLowerCase()
-  const filtered = recipes.filter(r=>{
-    if(!q) return true
-    return (r.title + ' ' + (r.description||'') + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q)
-  })
-  if(filtered.length===0){ listEl.innerHTML = '<p class="muted">Žádné recepty. Přidejte JSON soubory do adresáře <code>data/</code> v repozitáři.</p>' ; return }
+  // remove existing sentinel
+  if(sentinel && sentinel.parentNode) sentinel.parentNode.removeChild(sentinel)
+  sentinel = document.createElement('div')
+  sentinel.className = 'sentinel'
+  listEl.appendChild(sentinel)
 
-  filtered.forEach((r)=>{
+  // setup observer for infinite scroll
+  if(observer) observer.disconnect()
+  observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) loadMore()
+    })
+  }, {rootMargin: '200px'})
+  observer.observe(sentinel)
+
+  loadMore()
+}
+
+function loadMore(){
+  if(renderedCount >= filtered.length) return
+  const next = Math.min(renderedCount + BATCH, filtered.length)
+  // remove sentinel before appending cards so it stays at the end
+  if(sentinel && sentinel.parentNode) sentinel.parentNode.removeChild(sentinel)
+
+  for(let i = renderedCount; i < next; i++){
+    const r = filtered[i]
     const card = document.createElement('article')
     card.className = 'card'
-    // image
+
     const imgDiv = document.createElement('div')
     imgDiv.className = 'card-img'
     if(r.image){
-      imgDiv.style.backgroundImage = `url(${r.image})`
+      const img = document.createElement('img')
+      img.src = r.image
+      img.alt = r.title || 'Recept'
+      img.loading = 'lazy'
+      img.decoding = 'async'
+      imgDiv.appendChild(img)
     }else{
-      // gradient placeholder with initial
-      const initial = escapeHtml((r.title||'')[0] || '?')
-      imgDiv.style.display = 'flex'
-      imgDiv.style.alignItems = 'center'
-      imgDiv.style.justifyContent = 'center'
-      imgDiv.style.fontSize = '48px'
-      imgDiv.style.fontWeight = '700'
-      imgDiv.textContent = initial
+      const span = document.createElement('div')
+      span.className = 'initial'
+      span.textContent = (r.title||'')[0] || '?'
+      imgDiv.appendChild(span)
     }
 
     const body = document.createElement('div')
     body.className = 'card-body'
+    const preview = (r.ingredients || []).slice(0,2).join(', ')
     body.innerHTML = `
       <h3>${escapeHtml(r.title)}</h3>
       <div class="muted">${escapeHtml(r.description || '')}</div>
+      <div class="card-body-preview">${preview? `<div class=\"preview-ing\">${escapeHtml(preview)}</div>` : ''}</div>
       <div class="chips">${(r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
       <div class="card-actions"><button data-id="${r.id}" class="btn view-btn">Zobrazit</button></div>`
 
@@ -70,7 +100,31 @@ function renderList(filter=''){
     card.appendChild(body)
     listEl.appendChild(card)
     card.querySelector('.view-btn').addEventListener('click', ()=> showRecipe(r.id))
+  }
+
+  // re-add sentinel
+  listEl.appendChild(sentinel)
+  renderedCount = next
+  // if all rendered, stop observing
+  if(renderedCount >= filtered.length && observer){
+    observer.unobserve(sentinel)
+  }
+}
+
+function applySearch(q){
+  q = (q||'').trim().toLowerCase()
+  filtered = recipes.filter(r=>{
+    if(!q) return true
+    return (r.title + ' ' + (r.description||'') + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q)
   })
+  renderedCount = 0
+  listEl.innerHTML = ''
+  if(sentinel && sentinel.parentNode) sentinel.parentNode.removeChild(sentinel)
+  sentinel = document.createElement('div')
+  sentinel.className = 'sentinel'
+  listEl.appendChild(sentinel)
+  if(observer) observer.observe(sentinel)
+  loadMore()
 }
 
 function showRecipe(id){
@@ -85,6 +139,7 @@ function showRecipe(id){
   (r.steps||[]).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) })
   if(r.image){
     dImage.style.backgroundImage = `url(${r.image})`
+    dImage.textContent = ''
   }else{
     dImage.style.backgroundImage = ''
     dImage.textContent = (r.title||'')[0] || ''
@@ -101,7 +156,8 @@ function backToList(){
 
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
 
-searchInput.addEventListener('input', ()=> renderList(searchInput.value))
+searchInput.addEventListener('input', ()=> applySearch(searchInput.value))
 el('back').addEventListener('click', backToList)
 
+// init
 loadRecipes()
