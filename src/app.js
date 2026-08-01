@@ -25,9 +25,6 @@ const dSteps = el('detail-steps')
 
 // Buttons
 const btnNew = el('btn-new')
-const btnExport = el('btn-export')
-const btnImport = el('btn-import')
-const inputImport = el('import-file')
 
 let currentId = null
 
@@ -144,32 +141,6 @@ function deleteCurrent(){
   renderList(searchInput.value)
 }
 
-// export / import
-function exportJson(){
-  const dataStr = JSON.stringify(recipes, null, 2)
-  const blob = new Blob([dataStr], {type:'application/json'})
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url; a.download = 'moje-recepty.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
-}
-
-function importJsonFile(file){
-  const reader = new FileReader()
-  reader.onload = ()=>{
-    try{
-      const imported = JSON.parse(reader.result)
-      if(!Array.isArray(imported)) throw new Error('Neplatný formát')
-      // merge: přidej nové itemy (podle id)
-      const map = new Map(recipes.map(r=>[r.id,r]))
-      imported.forEach(r=>{ if(r.id && !map.has(r.id)) map.set(r.id,r) })
-      recipes = Array.from(map.values())
-      saveRecipes(); renderList()
-      alert('Import dokončen')
-    }catch(e){ alert('Chyba při importu: ' + e.message) }
-  }
-  reader.readAsText(file)
-}
-
 // helpers
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
 
@@ -182,13 +153,6 @@ el('delete').addEventListener('click', deleteCurrent)
 
 el('recipe-form').addEventListener('submit', saveFromForm)
 el('cancel').addEventListener('click', backToList)
-
-btnExport.addEventListener('click', exportJson)
-btnImport.addEventListener('click', ()=> inputImport.click())
-inputImport.addEventListener('change', ()=>{
-  const f = inputImport.files && inputImport.files[0]
-  if(f) importJsonFile(f)
-})
 
 // init
 loadRecipes()

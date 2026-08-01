@@ -4,7 +4,7 @@ Jednoduchá statická webová aplikace pro ukládání receptů v prohlížeči 
 
 Jak spustit
 
-1. Stačí otevřít `index.html` v prohlížeči (bez serveru). Aplikace načte ukázkové recepty, pokud v localStorage žádné nejsou.
+1. Stačí otevřít `index.html` v prohlížeči (bez serveru). Aplikace načte ukázkové recepty, pokud v localStorage žádná nejsou.
 2. Můžete také nasadit na GitHub Pages — povolte Pages v nastavení repozitáře a nastavte zdroj na `main` branch (root). Stránka bude dostupná na `https://<váš-uživatel>.github.io/moje-recepty/`.
 
 Funkce
@@ -12,7 +12,6 @@ Funkce
 - Zobrazit seznam receptů
 - Přidat / upravit / smazat recept
 - Hledání
-- Export / import receptů ve formátu JSON
 
 Poznámky
 
