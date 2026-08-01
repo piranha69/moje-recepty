@@ -69,6 +69,8 @@ function loadMore(){
     const r = filtered[i]
     const card = document.createElement('article')
     card.className = 'card'
+    card.tabIndex = 0
+    card.setAttribute('role','button')
 
     const imgDiv = document.createElement('div')
     imgDiv.className = 'card-img'
@@ -96,13 +98,15 @@ function loadMore(){
       <h3>${escapeHtml(r.title)}</h3>
       <div class="muted">${escapeHtml(r.description || '')}</div>
       <div class="card-body-preview">${preview? `<div class=\"preview-ing\" title=\"${escapeHtml((r.ingredients||[]).join(', '))}\">${escapeHtml(preview)}</div>` : ''}</div>
-      <div class="chips">${(r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
-      <div class="card-actions"><button data-id="${r.id}" class="btn view-btn">Zobrazit</button></div>`
+      <div class="chips">${(r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>`
 
     card.appendChild(imgDiv)
     card.appendChild(body)
+    // make whole card clickable and keyboard accessible
+    card.addEventListener('click', ()=> showRecipe(r.id))
+    card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); showRecipe(r.id) } })
+
     listEl.appendChild(card)
-    card.querySelector('.view-btn').addEventListener('click', ()=> showRecipe(r.id))
   }
 
   // re-add sentinel
