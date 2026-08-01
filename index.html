@@ -6,7 +6,7 @@
   <title>Moje recepty</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles.css">
   <meta name="theme-color" content="#d35400">
 </head>
@@ -23,25 +23,34 @@
     </div>
   </header>
 
-  <main class="container">
-    <section id="list" class="panel cards"></section>
-
-    <section id="detail" class="panel hidden detail-panel">
-      <button id="back" class="btn ghost">◀ Zpět</button>
-      <h2 id="detail-title"></h2>
-      <p id="detail-desc"></p>
-      <h3>Ingredience</h3>
-      <ul id="detail-ingredients"></ul>
-      <h3>Postup</h3>
-      <ol id="detail-steps"></ol>
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h2>Vaše oblíbené recepty. Krásně a přehledně.</h2>
+          <p>Prohlížejte a spravujte recepty přímo přes Git — jednoduché, bez zbytečných rozhraní.</p>
+        </div>
+      </div>
     </section>
 
+    <div class="container">
+      <section id="list" class="panel cards"></section>
+
+      <section id="detail" class="panel hidden detail-panel">
+        <button id="back" class="btn ghost">◀ Zpět</button>
+        <div id="detail-image" class="detail-image"></div>
+        <h2 id="detail-title"></h2>
+        <p id="detail-desc"></p>
+        <h3>Ingredience</h3>
+        <ul id="detail-ingredients"></ul>
+        <h3>Postup</h3>
+        <ol id="detail-steps"></ol>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <!-- Footer intentionally left blank -->
-    </div>
+    <div class="container"></div>
   </footer>
 
   <script src="src/app.js"></script>
