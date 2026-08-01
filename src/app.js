@@ -88,14 +88,14 @@ function loadMore(){
 
     const body = document.createElement('div')
     body.className = 'card-body'
-    // show up to 10 ingredients preview, append ellipsis if more
+    // show up to 10 ingredients preview, append "(a další N)" if more
     const ingList = (r.ingredients || []).slice(0,10)
-    const more = (r.ingredients || []).length > 10
-    const preview = ingList.join(', ') + (more ? ' …' : '')
+    const moreCount = Math.max(0, (r.ingredients || []).length - ingList.length)
+    const preview = ingList.join(', ') + (moreCount>0 ? ` (a další ${moreCount})` : '')
     body.innerHTML = `
       <h3>${escapeHtml(r.title)}</h3>
       <div class="muted">${escapeHtml(r.description || '')}</div>
-      <div class="card-body-preview">${preview? `<div class=\"preview-ing\">${escapeHtml(preview)}</div>` : ''}</div>
+      <div class="card-body-preview">${preview? `<div class=\"preview-ing\" title=\"${escapeHtml((r.ingredients||[]).join(', '))}\">${escapeHtml(preview)}</div>` : ''}</div>
       <div class="chips">${(r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
       <div class="card-actions"><button data-id="${r.id}" class="btn view-btn">Zobrazit</button></div>`
 
