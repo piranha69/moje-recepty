@@ -64,17 +64,6 @@ function loadRecipes(){
       recipes = Array.isArray(data) ? data : []
       console.log('loadRecipes: got', recipes.length, 'recipes')
       initList()
-      // If URL has ?recipe=ID open that recipe (deep-link support)
-      const params = new URLSearchParams(location.search)
-      const rid = params.get('recipe')
-      if(rid){
-        // small timeout to ensure list rendered state is consistent
-        setTimeout(()=>{
-          const found = recipes.find(x=>x.id===rid)
-          if(found) showRecipe(rid)
-          else console.warn('loadRecipes: recipe id in URL not found', rid)
-        }, 0)
-      }
     })
     .catch(err=>{
       console.error('Failed to load recipes:', err)
@@ -157,9 +146,9 @@ function loadMore(){
         <div class="chips">${(toArray(r.tags)||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
       </div>`
 
-    // Create anchor for per-recipe page (SEO / deep-linking)
+    // Create anchor for per-recipe page (separate page now)
     const link = document.createElement('a')
-    link.href = `?recipe=${encodeURIComponent(r.id)}`
+    link.href = `recipe.html?recipe=${encodeURIComponent(r.id)}`
     link.className = 'card-link'
     // Put image div and body inside the link
     link.appendChild(imgDiv)
@@ -168,19 +157,6 @@ function loadMore(){
     wrapper.innerHTML = bodyHtml
     // append all children of wrapper to link
     Array.from(wrapper.childNodes).forEach(n=> link.appendChild(n))
-
-    // Intercept click to avoid full page reload and open client-side detail
-    link.addEventListener('click', (e)=>{
-      e.preventDefault()
-      const url = `?recipe=${encodeURIComponent(r.id)}`
-      if(history && history.pushState){
-        history.pushState({recipe: r.id}, '', url)
-      } else {
-        location.href = url
-        return
-      }
-      showRecipe(r.id)
-    })
 
     card.appendChild(link)
     listEl.appendChild(card)
@@ -234,48 +210,19 @@ function showRecipe(id){
     dImage.style.backgroundImage = ''
     dImage.textContent = (r.title||'')[0] || ''
   }
-  // Hide list and show detail (this makes ?recipe= behave like a per-recipe page)
+  // Hide list and show detail (for in-page view only)
   listEl.classList.add('hidden')
   detailEl.classList.remove('hidden')
-  // scroll detail element into view (previously we scrolled to top which could hide the detail)
-  try{
-    if(detailEl && typeof detailEl.scrollIntoView === 'function'){
-      detailEl.scrollIntoView({behavior:'smooth', block:'start'})
-    } else {
-      window.scrollTo(0,0)
-    }
-  }catch(e){
-    // fallback
-    window.scrollTo(0,0)
-  }
+  try{ window.scrollTo({top:0,behavior:'smooth'}) }catch(e){ window.scrollTo(0,0) }
 }
 
 function backToList(){
   currentId = null
-  // remove recipe param from URL without reloading
-  if(history && history.replaceState){
-    const url = new URL(location.href)
-    url.searchParams.delete('recipe')
-    history.replaceState({}, '', url.pathname + url.search)
-  }
   listEl.classList.remove('hidden')
   detailEl.classList.add('hidden')
 }
 
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
-
-// Handle back/forward navigation to keep UI in sync with URL
-window.addEventListener('popstate', (e)=>{
-  const params = new URLSearchParams(location.search)
-  const rid = params.get('recipe')
-  if(rid){
-    // If recipes already loaded, show immediately, otherwise loadRecipes will check on completion
-    const found = recipes.find(x=>x.id===rid)
-    if(found) showRecipe(rid)
-  } else {
-    backToList()
-  }
-})
 
 // debounce the search handler to avoid excessive filtering while typing
 const debouncedSearch = debounce(()=> applySearch(searchInput.value), 250)
