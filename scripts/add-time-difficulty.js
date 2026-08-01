@@ -1,8 +1,8 @@
 // Simple Node script to add `time` and `difficulty` fields to data/sample-recipes.json
 // Heuristics:
-//  - ingredients length <= 4  => time: "20 min", difficulty: "easy"
-//  - ingredients length <= 10 => time: "45 min", difficulty: "medium"
-//  - otherwise                => time: "90 min", difficulty: "hard"
+//  - ingredients length <= 4  => time: "20 min", difficulty: "snadné"
+//  - ingredients length <= 10 => time: "45 min", difficulty: "střední"
+//  - otherwise                => time: "90 min", difficulty: "těžké"
 
 const fs = require('fs')
 const path = require('path')
@@ -22,9 +22,9 @@ try{
 }
 let changed = false
 const mapDifficulty = (n) => {
-  if(n <= 4) return {time: '20 min', difficulty: 'easy'}
-  if(n <= 10) return {time: '45 min', difficulty: 'medium'}
-  return {time: '90 min', difficulty: 'hard'}
+  if(n <= 4) return {time: '20 min', difficulty: 'snadné'}
+  if(n <= 10) return {time: '45 min', difficulty: 'střední'}
+  return {time: '90 min', difficulty: 'těžké'}
 }
 data = data.map(item => {
   const copy = Object.assign({}, item)

@@ -62,7 +62,9 @@ function initList(){
 function metaHtml(r){
   const time = r.time ? `<span class="meta-time">⏱ ${escapeHtml(String(r.time))}</span>` : ''
   const diffText = r.difficulty ? String(r.difficulty) : ''
-  const diffClass = diffText ? diffText.toLowerCase() : ''
+  // Map Czech labels to ascii class names for styling
+  const diffClassMap = { 'snadné': 'easy', 'střední': 'medium', 'těžké': 'hard' }
+  const diffClass = diffText ? (diffClassMap[diffText.toLowerCase()] || diffText.toLowerCase().replace(/\s+/g,'-')) : ''
   const diff = diffText ? `<span class="meta-difficulty ${escapeHtml(diffClass)}">${escapeHtml(diffText)}</span>` : ''
   return `${time}${diff}`
 }
