@@ -237,8 +237,17 @@ function showRecipe(id){
   // Hide list and show detail (this makes ?recipe= behave like a per-recipe page)
   listEl.classList.add('hidden')
   detailEl.classList.remove('hidden')
-  // ensure user sees the detail (scroll to top)
-  try{ window.scrollTo({top:0,behavior:'smooth'}) }catch(e){ window.scrollTo(0,0) }
+  // scroll detail element into view (previously we scrolled to top which could hide the detail)
+  try{
+    if(detailEl && typeof detailEl.scrollIntoView === 'function'){
+      detailEl.scrollIntoView({behavior:'smooth', block:'start'})
+    } else {
+      window.scrollTo(0,0)
+    }
+  }catch(e){
+    // fallback
+    window.scrollTo(0,0)
+  }
 }
 
 function backToList(){
