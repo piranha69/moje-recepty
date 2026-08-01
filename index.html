@@ -4,22 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Moje recepty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles.css">
+  <meta name="theme-color" content="#d35400">
 </head>
 <body>
-  <header>
-    <h1>Moje recepty</h1>
-    <div class="controls">
-      <input id="search" placeholder="Hledat recepty..." />
-      <button id="btn-new">Přidat recept</button>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <h1>Moje recepty</h1>
+        <p class="tagline">Sbírka vašich oblíbených jídel</p>
+      </div>
+      <div class="controls">
+        <input id="search" placeholder="Hledat recepty..." aria-label="Hledat recepty" />
+        <button id="btn-new" class="btn primary">Přidat recept</button>
+      </div>
     </div>
   </header>
 
-  <main>
-    <section id="list" class="panel"></section>
+  <main class="container">
+    <section id="list" class="panel cards"></section>
 
-    <section id="detail" class="panel hidden">
-      <button id="back">◀ Zpět</button>
+    <section id="detail" class="panel hidden detail-panel">
+      <button id="back" class="btn ghost">◀ Zpět</button>
       <h2 id="detail-title"></h2>
       <p id="detail-desc"></p>
       <h3>Ingredience</h3>
@@ -27,30 +36,36 @@
       <h3>Postup</h3>
       <ol id="detail-steps"></ol>
       <div class="detail-actions">
-        <button id="edit">Upravit</button>
-        <button id="delete">Smazat</button>
+        <button id="edit" class="btn">Upravit</button>
+        <button id="delete" class="btn danger">Smazat</button>
       </div>
     </section>
 
-    <section id="form" class="panel hidden">
-      <h2 id="form-title">Přidat recept</h2>
-      <form id="recipe-form">
-        <input type="hidden" id="recipe-id" />
-        <label>Název<br><input id="title" required /></label>
-        <label>Krátký popis<br><input id="description" /></label>
-        <label>Ingredience (jedna na řádek)<br><textarea id="ingredients"></textarea></label>
-        <label>Postup (jedna věta/řádek)<br><textarea id="steps"></textarea></label>
-        <label>Štítky (oddělit čárkou)<br><input id="tags" /></label>
-        <div class="form-actions">
-          <button type="submit">Uložit</button>
-          <button type="button" id="cancel">Zrušit</button>
-        </div>
-      </form>
+    <!-- Modal form -->
+    <section id="form" class="panel modal hidden" role="dialog" aria-modal="true" aria-labelledby="form-title">
+      <div class="modal-inner">
+        <h2 id="form-title">Přidat recept</h2>
+        <form id="recipe-form">
+          <input type="hidden" id="recipe-id" />
+          <label>Název<br><input id="title" required /></label>
+          <label>Krátký popis<br><input id="description" /></label>
+          <label>Ingredience (jedna na řádek)<br><textarea id="ingredients"></textarea></label>
+          <label>Postup (jedna věta/řádek)<br><textarea id="steps"></textarea></label>
+          <label>Štítky (oddělit čárkou)<br><input id="tags" /></label>
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Uložit</button>
+            <button type="button" id="cancel" class="btn ghost">Zrušit</button>
+          </div>
+        </form>
+      </div>
     </section>
+
   </main>
 
-  <footer>
-    <small>Statická aplikace — data se ukládají v prohlížeči (localStorage). Více v README.</small>
+  <footer class="site-footer">
+    <div class="container">
+      <small>Statická aplikace — data se ukládají v prohlížeči (localStorage).</small>
+    </div>
   </footer>
 
   <script src="src/app.js"></script>

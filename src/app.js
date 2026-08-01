@@ -55,11 +55,20 @@ function renderList(filter=''){
     return (r.title + ' ' + (r.description||'') + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q)
   })
   if(filtered.length===0){ listEl.innerHTML = '<p class="muted">Žádné recepty. Klikněte na "Přidat recept" pro vytvoření.</p>' ; return }
-  filtered.forEach(r=>{
+  filtered.forEach((r, idx)=>{
     const item = document.createElement('div')
     item.className = 'recipe'
-    item.innerHTML = `<div><h3>${escapeHtml(r.title)}</h3><div class="muted">${escapeHtml(r.description || '')}</div></div>
-      <div><button data-id="${r.id}">Zobrazit</button></div>`
+    // use first tag or index to create a subtle image variant (CSS background via thumb)
+    const tagsHtml = (r.tags||[]).map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join(' ')
+    const initial = escapeHtml((r.title||'')[0] || '?')
+    item.innerHTML = `
+      <div class="thumb" aria-hidden>${initial}</div>
+      <div class="card-body">
+        <h3>${escapeHtml(r.title)}</h3>
+        <div class="muted">${escapeHtml(r.description || '')}</div>
+        <div class="chips">${tagsHtml}</div>
+        <div class="card-actions"><button data-id="${r.id}" class="btn">Zobrazit</button></div>
+      </div>`
     item.querySelector('button').addEventListener('click', ()=> showRecipe(r.id))
     listEl.appendChild(item)
   })
@@ -101,9 +110,14 @@ function openForm(edit=false){
     fTags.value = ''
     el('form-title').textContent = 'Přidat recept'
   }
-  listEl.classList.add('hidden')
-  detailEl.classList.add('hidden')
+  // show modal form
   formEl.classList.remove('hidden')
+  document.body.classList.add('modal-open')
+}
+
+function closeForm(){
+  formEl.classList.add('hidden')
+  document.body.classList.remove('modal-open')
 }
 
 function backToList(){
@@ -129,7 +143,7 @@ function saveFromForm(ev){
   else recipes.unshift(newR)
   saveRecipes()
   renderList(searchInput.value)
-  backToList()
+  closeForm()
 }
 
 function deleteCurrent(){
@@ -152,7 +166,7 @@ el('edit').addEventListener('click', ()=> openForm(true))
 el('delete').addEventListener('click', deleteCurrent)
 
 el('recipe-form').addEventListener('submit', saveFromForm)
-el('cancel').addEventListener('click', backToList)
+el('cancel').addEventListener('click', closeForm)
 
 // init
 loadRecipes()
