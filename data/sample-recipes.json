@@ -1,0 +1,39 @@
+[
+  {
+    "id": "r1",
+    "title": "Rychlá rajčatová polévka",
+    "description": "Jednoduchá polévka z čerstvých rajčat",
+    "ingredients": [
+      "500 g rajčat",
+      "1 cibule",
+      "2 stroužky česneku",
+      "500 ml zeleninového vývaru",
+      "sůl a pepř"
+    ],
+    "steps": [
+      "Cibuli a česnek osmahněte na oleji.",
+      "Přidejte nakrájená rajčata a krátce povařte.",
+      "Zalijte vývarem a vařte 10–15 minut.",
+      "Rozmixujte dohladka a dochuťte solí a pepřem."
+    ],
+    "tags": ["polévka","rychlé"]
+  },
+  {
+    "id": "r2",
+    "title": "Bramborový salát (rychlý)",
+    "description": "Lehký salát s bylinkami",
+    "ingredients": [
+      "500 g vařených brambor",
+      "1 cibule",
+      "2 lžíce majonézy",
+      "pažitka",
+      "sůl a pepř"
+    ],
+    "steps": [
+      "Brambory nakrájejte na kostičky.",
+      "Smíchejte s nasekanou cibulí, majonézou a pažitkou.",
+      "Dochucení solí a pepřem podle chuti."
+    ],
+    "tags": ["salát","rychlé"]
+  }
+]
