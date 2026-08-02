@@ -69,7 +69,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Detail */
 .detail-panel{margin-top:1.25rem}
-.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--accent-dark)}
 .detail-panel h2{margin-top:0}
 /* Make detail meta spacing match the card meta (flex + gap) */
 .detail-meta{margin-top:0.5rem;display:flex;gap:.5rem;align-items:center}
@@ -85,7 +85,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Dark theme: change hero colors to cream shades and adjust chips */
 @media (prefers-color-scheme: dark) {
-  :root{--bg:#071018;--card:#071827;--accent:#ff8a3d;--accent-dark:#ff7a3d;--muted:#9fb1bd;--text:#e6f0f6;--shadow: rgba(0,0,0,0.6);--hero-panel: rgba(7,24,36,0.6);--hero-h2-gradient: linear-gradient(90deg,var(--hero-cream-1),var(--hero-cream-2));}
+  :root{--bg:#071018;--card:#071827;--accent:#ff8a3d;--accent-dark:#ff7a3d;--muted:#9fb1bd;--text:#e6f0f6;--shadow: rgba(0,0,0,0.6);--hero-panel: rgba(7,24,36,0.6);--hero-h2-gradient: linear-gradient(90deg,#efe3c8,#f7efe0);} 
   body{background:linear-gradient(180deg,#031018,var(--bg));color:var(--text)}
   .controls input{background:#08131a;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
   .card{box-shadow:0 12px 30px rgba(0,0,0,0.6)}
@@ -96,4 +96,27 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 /* Light theme: subtle two-shade gradient for hero heading */
 @media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
   :root{--hero-panel: rgba(255,255,255,0.85);--hero-h2-gradient: linear-gradient(90deg,var(--hero-color-1),var(--hero-color-2));}
+}
+
+/* Detail card for standalone recipe page and unified detail styling */
+.detail-card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:1.25rem;
+  box-shadow:0 22px 48px var(--shadow);
+  max-width:900px;
+  margin:1.5rem auto;
+  overflow:hidden;
+}
+.detail-card h1, .detail-panel h2{font-family:'Playfair Display', serif;margin:0 0 .5rem 0;font-size:2rem}
+.detail-card .detail-desc{color:var(--muted);margin-bottom:1rem}
+.detail-card .detail-image{height:320px;border-radius:12px;margin-bottom:1rem;background:#eee;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--accent-dark);font-size:64px;overflow:hidden}
+.detail-card ul, .detail-card ol{margin:0 0 1rem 1.25rem;padding:0}
+.back-link{display:inline-block;margin-bottom:1rem}
+.btn{padding:.5rem .8rem;border-radius:10px;border:none;background:var(--accent);color:white;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+.btn.ghost{background:transparent;color:var(--accent-dark);border:1px solid rgba(11,18,32,0.06)}
+@media(max-width:800px){
+  .detail-card{padding:1rem}
+  .detail-card h1{font-size:1.4rem}
+  .detail-card .detail-image{height:220px}
 }
