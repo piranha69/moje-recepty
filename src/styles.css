@@ -6,6 +6,7 @@
   --hero-cream-1: #f7efe0; /* cream for dark mode */
   --hero-cream-2: #efe3c8;
   --radius:14px; --gap:1rem; --text:#0b1220; --shadow: rgba(16,24,40,0.06);
+  --hero-panel: rgba(255,255,255,0.85); /* panel background for hero content (light) */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -20,7 +21,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Hero */
 .hero{background:linear-gradient(135deg, rgba(255,122,61,0.04), rgba(255,255,255,0.01));padding:3.25rem 0;margin-bottom:1rem}
-.hero-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+.hero-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:1.25rem;border-radius:16px;background:var(--hero-panel);box-shadow:0 12px 30px var(--shadow);width:100%}
 .hero-text h2{font-family:'Playfair Display', serif;font-size:2rem;margin:0 0 .5rem;color:var(--hero-color-1);text-align:center;line-height:1.05}
 .hero-search{width:100%;display:flex;justify-content:center;margin-top:0.6rem}
 .hero-search input{width:min(720px,100%);padding:1.05rem 1rem;border-radius:12px;border:1px solid #e8e8e8;background:#fff;font-size:1rem}
@@ -58,7 +59,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Detail */
 .detail-panel{margin-top:1.25rem}
-.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(-[...]
 .detail-panel h2{margin-top:0}
 .detail-meta{margin-top:0.5rem}
 
@@ -73,7 +74,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Dark theme: change hero colors to cream shades and adjust chips */
 @media (prefers-color-scheme: dark) {
-  :root{--bg:#071018;--card:#071827;--accent:#ff8a3d;--accent-dark:#ff7a3d;--muted:#9fb1bd;--text:#e6f0f6;--shadow: rgba(0,0,0,0.6)}
+  :root{--bg:#071018;--card:#071827;--accent:#ff8a3d;--accent-dark:#ff7a3d;--muted:#9fb1bd;--text:#e6f0f6;--shadow: rgba(0,0,0,0.6);--hero-panel: rgba(7,24,36,0.6)}
   body{background:linear-gradient(180deg,#031018,var(--bg));color:var(--text)}
   .controls input{background:#08131a;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
   .card{box-shadow:0 12px 30px rgba(0,0,0,0.6)}
