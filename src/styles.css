@@ -30,8 +30,8 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 /* Hero */
 .hero{background:linear-gradient(135deg, rgba(255,122,61,0.04), rgba(255,255,255,0.01));padding:3.25rem 0;margin-bottom:1rem}
 /* Reduced gap between title and search, and ensure hero panel uses CSS vars */
-.hero-inner{display:flex;flex-direction:column;align-items:center;gap:0.6rem;padding:1.25rem;border-radius:16px;background:var(--hero-panel);box-shadow:0 12px 30px var(--shadow);width:100%;transition:background .25s ease,color .25s ease}
-.hero-text h2{font-family:'Playfair Display', serif;font-size:2rem;margin:0 0 .15rem;text-align:center;line-height:1.1;background-image:var(--hero-h2-gradient);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-font-smoothing:antialiased;display:inline-block}
+.hero-inner{display:flex;flex-direction:column;align-items:center;gap:0.6rem;padding:1.25rem;border-radius:16px;background:var(--hero-panel);box-shadow:0 12px 30px var(--shadow);width:100%;transition:transform .18s ease}
+.hero-text h2{font-family:'Playfair Display', serif;font-size:2rem;margin:0 0 .15rem;text-align:center;line-height:1.1;background-image:var(--hero-h2-gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero-search{width:100%;display:flex;justify-content:center;margin-top:0}
 /* slightly tighter input spacing */
 .hero-search input{width:min(720px,100%);padding:1.05rem 1rem;border-radius:12px;border:1px solid #e8e8e8;background:#fff;font-size:1rem}
@@ -71,7 +71,8 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 .detail-panel{margin-top:1.25rem}
 .detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--text)}
 .detail-panel h2{margin-top:0}
-.detail-meta{margin-top:0.5rem}
+/* Make detail meta spacing match the card meta (flex + gap) */
+.detail-meta{margin-top:0.5rem;display:flex;gap:.5rem;align-items:center}
 
 /* Footer */
 .site-footer{padding:2rem 0}
