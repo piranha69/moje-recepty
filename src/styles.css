@@ -124,10 +124,13 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 .detail-card .card-body{
   width:100%;
   max-width:720px;
-  text-align:left;
+  text-align:center;
   padding:0 0 1rem 0;
 }
-.detail-card .detail-desc{color:var(--muted);margin-bottom:1rem;text-align:left}
+/* center meta and chips under the title */
+.detail-card .detail-meta{justify-content:center}
+.detail-card .chips{justify-content:center}
+.detail-card .detail-desc{color:var(--muted);margin-bottom:1rem;text-align:center}
 .detail-card .detail-image{height:320px;border-radius:12px;margin-bottom:1rem;background:#eee;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--accent-dark);font-size:64px;overflow:hidden;width:100%}
 .detail-card ul, .detail-card ol{margin:0 0 1rem;padding:0;width:100%;max-width:720px;text-align:left}
 .back-link{display:inline-block;margin-bottom:1rem}
