@@ -1,12 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap');
 :root{
-  --bg:#f5f6f8; --card:#ffffff; --accent:#ff7a3d; --accent-dark:#d35400; --muted:#6b6b6b;
+  --bg:#f5f6f8;
+  --card:#ffffff;
+  --accent:#ff7a3d;
+  --accent-dark:#d35400;
+  --muted:#6b6b6b;
   --hero-color-1: #102129; /* left shade for hero (light) */
   --hero-color-2: #5b6b6f; /* right shade for hero (light) */
   --hero-cream-1: #f7efe0; /* cream for dark mode */
   --hero-cream-2: #efe3c8;
-  --radius:14px; --gap:1rem; --text:#0b1220; --shadow: rgba(16,24,40,0.06);
+  --radius:14px;
+  --gap:1rem;
+  --text:#0b1220;
+  --shadow: rgba(16,24,40,0.06);
   --hero-panel: rgba(255,255,255,0.85); /* panel background for hero content (light) */
+  --hero-h2-gradient: linear-gradient(90deg,var(--hero-color-1),var(--hero-color-2));
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -21,8 +29,8 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Hero */
 .hero{background:linear-gradient(135deg, rgba(255,122,61,0.04), rgba(255,255,255,0.01));padding:3.25rem 0;margin-bottom:1rem}
-.hero-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:1.25rem;border-radius:16px;background:var(--hero-panel);box-shadow:0 12px 30px var(--shadow);width:100%}
-.hero-text h2{font-family:'Playfair Display', serif;font-size:2rem;margin:0 0 .5rem;color:var(--hero-color-1);text-align:center;line-height:1.05}
+.hero-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:1.25rem;border-radius:16px;background:var(--hero-panel);box-shadow:0 12px 30px var(--shadow);width:100%;transition:background .25s ease,color .25s ease}
+.hero-text h2{font-family:'Playfair Display', serif;font-size:2rem;margin:0 0 .5rem;text-align:center;line-height:1.05;background-image:var(--hero-h2-gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero-search{width:100%;display:flex;justify-content:center;margin-top:0.6rem}
 .hero-search input{width:min(720px,100%);padding:1.05rem 1rem;border-radius:12px;border:1px solid #e8e8e8;background:#fff;font-size:1rem}
 
@@ -59,7 +67,7 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Detail */
 .detail-panel{margin-top:1.25rem}
-.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(-[...]
+.detail-image{height:300px;background:#eee;background-size:cover;background-position:center;border-radius:12px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--text)}
 .detail-panel h2{margin-top:0}
 .detail-meta{margin-top:0.5rem}
 
@@ -74,17 +82,15 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 
 /* Dark theme: change hero colors to cream shades and adjust chips */
 @media (prefers-color-scheme: dark) {
-  :root{--bg:#071018;--card:#071827;--accent:#ff8a3d;--accent-dark:#ff7a3d;--muted:#9fb1bd;--text:#e6f0f6;--shadow: rgba(0,0,0,0.6);--hero-panel: rgba(7,24,36,0.6)}
+  :root{--bg:#071018;--card:#071827;--accent:#ff8a3d;--accent-dark:#ff7a3d;--muted:#9fb1bd;--text:#e6f0f6;--shadow: rgba(0,0,0,0.6);--hero-panel: rgba(7,24,36,0.6);--hero-h2-gradient: linear-gradient(90deg,var(--hero-cream-1),var(--hero-cream-2));}
   body{background:linear-gradient(180deg,#031018,var(--bg));color:var(--text)}
   .controls input{background:#08131a;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
   .card{box-shadow:0 12px 30px rgba(0,0,0,0.6)}
   .card-img{background-color:#0b2230}
   .detail-image{background-color:#071827}
   .chip{background:rgba(255,255,255,0.04);box-shadow:none;color:var(--muted)}
-  /* hero colors switch to cream shades on dark */
-  .hero-text h2{background-image:linear-gradient(90deg,var(--hero-cream-1),var(--hero-cream-2));-webkit-background-clip:text;background-clip:text;color:transparent}
 }
 /* Light theme: subtle two-shade gradient for hero heading */
 @media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
-  .hero-text h2{background-image:linear-gradient(90deg,var(--hero-color-1),var(--hero-color-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  :root{--hero-panel: rgba(255,255,255,0.85);--hero-h2-gradient: linear-gradient(90deg,var(--hero-color-1),var(--hero-color-2));}
 }
