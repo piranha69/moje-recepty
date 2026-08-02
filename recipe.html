@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Recept — detail</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
   <style>
     /* Minimal local styles to ensure readability if global CSS missing */
     body{font-family:system-ui, sans-serif; padding:16px}
@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <a class="back-link" href="/">← Zpět na seznam</a>
+  <a class="back-link" href="./">← Zpět na seznam</a>
   <main id="detail">
     <h1 id="detail-title">...</h1>
     <div id="detail-image"></div>
@@ -43,7 +43,7 @@
     const id = params.get('recipe')
     if(!id){ dTitle.textContent = 'Recept nenalezen'; dDesc.textContent = 'Chybí identifikátor receptu v URL.'; }
     else{
-      fetch('/data/sample-recipes.json').then(r=>{ if(!r.ok) throw new Error('Fetch failed'); return r.json() }).then(data=>{
+      fetch('data/sample-recipes.json').then(r=>{ if(!r.ok) throw new Error('Fetch failed'); return r.json() }).then(data=>{
         const recipes = Array.isArray(data)? data: []
         const r = recipes.find(x=>x.id===id)
         if(!r){ dTitle.textContent = 'Recept nenalezen'; dDesc.textContent = `Recept s id ${id} nebyl nalezen.`; return }
