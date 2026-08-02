@@ -67,7 +67,7 @@ function loadRecipes(){
     })
     .catch(err=>{
       console.error('Failed to load recipes:', err)
-      listEl.innerHTML = '<p class="muted">Nelze načíst data. Ujistěte se, že soubory v adresáři data/ existují a že stránku spouštíte přes HTTP (ne file://).</p>'
+      if(listEl) listEl.innerHTML = '<p class="muted">Nelze načíst data. Ujistěte se, že soubory v adresáři data/ existují a že stránku spouštíte přes HTTP (ne file://).</p>'
     })
 }
 
@@ -75,12 +75,12 @@ function initList(){
   // initialize filtered and rendering
   filtered = recipes.slice()
   renderedCount = 0
-  listEl.innerHTML = ''
+  if(listEl) listEl.innerHTML = ''
   // remove existing sentinel
   if(sentinel && sentinel.parentNode) sentinel.parentNode.removeChild(sentinel)
   sentinel = document.createElement('div')
   sentinel.className = 'sentinel'
-  listEl.appendChild(sentinel)
+  if(listEl) listEl.appendChild(sentinel)
 
   // setup observer for infinite scroll
   if(observer) observer.disconnect()
@@ -89,7 +89,7 @@ function initList(){
       if(entry.isIntersecting) loadMore()
     })
   }, {rootMargin: '200px'})
-  observer.observe(sentinel)
+  if(sentinel) observer.observe(sentinel)
 
   loadMore()
 }
@@ -105,6 +105,7 @@ function metaHtml(r){
 }
 
 function loadMore(){
+  if(!listEl) return
   if(renderedCount >= filtered.length) return
   const next = Math.min(renderedCount + BATCH, filtered.length)
   // remove sentinel before appending cards so it stays at the end
@@ -183,11 +184,11 @@ function applySearch(q){
     return hay.includes(nq)
   })
   renderedCount = 0
-  listEl.innerHTML = ''
+  if(listEl) listEl.innerHTML = ''
   if(sentinel && sentinel.parentNode) sentinel.parentNode.removeChild(sentinel)
   sentinel = document.createElement('div')
   sentinel.className = 'sentinel'
-  listEl.appendChild(sentinel)
+  if(listEl) listEl.appendChild(sentinel)
   if(observer) observer.observe(sentinel)
   loadMore()
 }
@@ -197,37 +198,30 @@ function showRecipe(id){
   const r = recipes.find(x=>x.id===id)
   if(!r) return alert('Recept nenalezen')
   currentId = id
-  dTitle.textContent = r.title
-  dDesc.innerHTML = `${escapeHtml(r.description || '')}<div class="detail-meta">${metaHtml(r)}</div>`
-  dIngr.innerHTML = ''
-  toArray(r.ingredients).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) })
-  dSteps.innerHTML = ''
-  toArray(r.steps).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) })
-  if(r.image){
-    dImage.style.backgroundImage = `url(${r.image})`
-    dImage.textContent = ''
-  }else{
-    dImage.style.backgroundImage = ''
-    dImage.textContent = (r.title||'')[0] || ''
-  }
+  if(dTitle) dTitle.textContent = r.title
+  if(dDesc) dDesc.innerHTML = `${escapeHtml(r.description || '')}<div class="detail-meta">${metaHtml(r)}</div>`
+  if(dIngr){ dIngr.innerHTML = ''; toArray(r.ingredients).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) }) }
+  if(dSteps){ dSteps.innerHTML = ''; toArray(r.steps).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) }) }
+  if(dImage){ if(r.image){ dImage.style.backgroundImage = `url(${r.image})`; dImage.textContent = '' }else{ dImage.style.backgroundImage = ''; dImage.textContent = (r.title||'')[0] || '' } }
   // Hide list and show detail (for in-page view only)
-  listEl.classList.add('hidden')
-  detailEl.classList.remove('hidden')
+  if(listEl) listEl.classList.add('hidden')
+  if(detailEl) detailEl.classList.remove('hidden')
   try{ window.scrollTo({top:0,behavior:'smooth'}) }catch(e){ window.scrollTo(0,0) }
 }
 
 function backToList(){
   currentId = null
-  listEl.classList.remove('hidden')
-  detailEl.classList.add('hidden')
+  if(listEl) listEl.classList.remove('hidden')
+  if(detailEl) detailEl.classList.add('hidden')
 }
 
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
 
 // debounce the search handler to avoid excessive filtering while typing
-const debouncedSearch = debounce(()=> applySearch(searchInput.value), 250)
-searchInput.addEventListener('input', debouncedSearch)
-el('back').addEventListener('click', backToList)
+const debouncedSearch = debounce(()=> applySearch(searchInput ? searchInput.value : ''), 250)
+if (searchInput) searchInput.addEventListener('input', debouncedSearch)
+const backBtn = el('back')
+if (backBtn) backBtn.addEventListener('click', backToList)
 
 // init
 loadRecipes()
