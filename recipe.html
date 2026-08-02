@@ -4,24 +4,27 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Recept — detail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles.css" />
-  <style>
-    /* Minimal local styles to ensure readability if global CSS missing */
-    body{font-family:system-ui, sans-serif; padding:16px}
-    .back-link{display:inline-block;margin-bottom:12px}
-    #detail{max-width:800px;margin:0 auto}
-    #detail-image{height:240px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:64px;color:#fff;background:#ddd}
-    .detail-meta{margin-top:8px}
-  </style>
 </head>
 <body>
-  <a class="back-link" href="./">← Zpět na seznam</a>
-  <main id="detail">
-    <h1 id="detail-title">...</h1>
-    <div id="detail-image"></div>
-    <div id="detail-desc">...</div>
+  <a class="back-link btn ghost" href="./" aria-label="Zpět na seznam">← Zpět na seznam</a>
+
+  <main class="detail-card" id="detail" role="main">
+    <div id="detail-image" class="detail-image" role="img" aria-label="Obrázek receptu"></div>
+
+    <div class="card-body">
+      <h1 id="detail-title">...</h1>
+      <div id="detail-meta" class="meta detail-meta"></div>
+      <div id="detail-desc" class="muted detail-desc">...</div>
+      <div id="detail-chips" class="chips"></div>
+    </div>
+
     <h3>Ingredience</h3>
     <ul id="detail-ingredients"></ul>
+
     <h3>Postup</h3>
     <ol id="detail-steps"></ol>
   </main>
@@ -33,10 +36,12 @@
     const dIngr = el('detail-ingredients')
     const dSteps = el('detail-steps')
     const dImage = el('detail-image')
+    const dMeta = el('detail-meta')
+    const dChips = el('detail-chips')
 
     function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
     function toArray(v){ if(Array.isArray(v)) return v; if(!v) return []; if(typeof v==='string') return v.split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean); return String(v).split(/\r?\n|,/).map(s=>s.trim()).filter(Boolean) }
-    function metaHtml(r){ const time = r.time? `<span class="meta-time">⏱ ${escapeHtml(String(r.time))}</span>`:''; const diffText = r.difficulty? String(r.difficulty):''; const diffClassMap = { 'snadné':'easy','střední':'medium','těžké':'hard'}; const diffClass = diffText? (diffClassMap[diffText.toLowerCase()] || diffText.toLowerCase().replace(/\s+/g,'-')):''; const diff = diffText? `<span class="meta-difficulty ${escapeHtml(diffClass)}">${escapeHtml(diffText)}</span>` : ''; return `${time}${diff}` }
+    function metaHtml(r){ const time = r.time? `<span class="meta-time">⏱ ${escapeHtml(String(r.time))}</span>` : ''; const diffText = r.difficulty? String(r.difficulty):''; const diffClassMap = {'snadné':'easy','střední':'medium','těžké':'hard'}; const diffClass = diffText? (diffClassMap[diffText.toLowerCase()]||diffText.toLowerCase().replace(/\s+/g,'-')) : ''; const diff = diffText? `<span class="meta-difficulty ${escapeHtml(diffClass)}">${escapeHtml(diffText)}</span>` : ''; return `${time}${diff}` }
 
     // read id from query param
     const params = new URLSearchParams(location.search)
@@ -47,12 +52,31 @@
         const recipes = Array.isArray(data)? data: []
         const r = recipes.find(x=>x.id===id)
         if(!r){ dTitle.textContent = 'Recept nenalezen'; dDesc.textContent = `Recept s id ${id} nebyl nalezen.`; return }
+
+        // Title
         dTitle.textContent = r.title || ''
-        dDesc.innerHTML = `${escapeHtml(r.description || '')}<div class="detail-meta">${metaHtml(r)}</div>`
+
+        // Meta
+        if(dMeta) dMeta.innerHTML = metaHtml(r)
+
+        // Chips/tags
+        if(dChips){
+          const tags = toArray(r.tags || [])
+          dChips.innerHTML = tags.map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')
+        }
+
+        // Description (plain text)
+        if(dDesc) dDesc.textContent = r.description || ''
+
+        // Ingredients
         dIngr.innerHTML = ''
         toArray(r.ingredients).forEach(i=>{ const li = document.createElement('li'); li.textContent = i; dIngr.appendChild(li) })
+
+        // Steps
         dSteps.innerHTML = ''
         toArray(r.steps).forEach(s=>{ const li = document.createElement('li'); li.textContent = s; dSteps.appendChild(li) })
+
+        // Image
         if(r.image){
           // set background after preloading image to avoid layout shift
           const img = new Image()
